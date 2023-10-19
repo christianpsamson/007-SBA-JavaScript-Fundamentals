@@ -75,33 +75,52 @@ const LearnerSubmissions = [
     },
   },
 ];
-
+// ========================================================//
+// Note: Headers were included for SBA purposes only       //
+// ========================================================//
+// ========================================================//
+// Function: Validate input data                           //
+// ========================================================//
+const validateInputData = function (objName, objID, errMsg) {
+  if (!Object.values(objName).includes(objID)) {
+    throw errMsg;
+  }
+};
+// ========================================================//
+// Function: Create an array                               //
+// ========================================================//
+//update this function to include data from AG
+// to get the following from Assignment Grp - ag.name, ag.due date, and ag.possible points
+// also - l.submission date and l.score
+const createArray = function (learnerID) {
+  let newArray = LearnerSubmissions.filter(
+    (learner) => learner.learner_id == learnerID
+  );
+  console.log(newArray);
+};
+// ========================================================//
+// Main function                                           //
+// ========================================================//
 function getLearnerData(course, ag, submissions) {
-  // Check for valid Course ID:
-  if (!Object.values(CourseInfo).includes(course)) {
-    throw "Invalid Course ID";
+  //Validate the input data:
+  validateInputData(CourseInfo, course, "Invalid Course ID");
+  validateInputData(AssignmentGroup, ag, "Invalid Assignment Group ID");
+
+  // Validate the input learner's ID
+  if (
+    LearnerSubmissions.some(
+      (learnerValid) => learnerValid.learner_id === submissions
+    )
+  ) {
+    createArray(submissions);
+  } else {
+    throw "Invalid Learner ID";
   }
 
-  //  Check for valid Assignment Group:
-  if (!Object.values(AssignmentGroup).includes(ag)) {
-    throw "Invalid Assignment Group ID";
-  }
-
-  //    Check for valid Learner ID. This is array.
-  // Look into helper function!
-
-  // Get the l.assignment ID
-  console.log(LearnerSubmissions.prototype.some((learnerValid) => learnerValid.learner_id == sumbmission));
-//Filter the learner's ID data
-//   console.log(
-//     LearnerSubmissions.filter((learner) => learner.learner_id == submissions)
-//   );
- 
-  // to get the following from Assignment Grp - ag.name, ag.due date, and ag.possible points
-  // also - l.submission date and l.score
+  // ========================END=============================//
 }
 
 // Code console to get the input data
-const result = getLearnerData(451, 12345, 1256);
+const result = getLearnerData(451, 12345, 125);
 
 // console.log(result);
