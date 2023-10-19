@@ -77,25 +77,31 @@ const LearnerSubmissions = [
 ];
 
 function getLearnerData(course, ag, submissions) {
-  // here, we would process this data to achieve the desired result.
-  const result = [
-    {
-      id: 125,
-      avg: 0.985, // (47 + 150) / (50 + 150)
-      1: 0.94, // 47 / 50
-      2: 1.0, // 150 / 150
-    },
-    {
-      id: 132,
-      avg: 0.82, // (39 + 125) / (50 + 150)
-      1: 0.78, // 39 / 50
-      2: 0.833, // late: (140 - 15) / 150
-    },
-  ];
+  // Check for valid Course ID:
+  if (!Object.values(CourseInfo).includes(course)) {
+    throw "Invalid Course ID";
+  }
 
-  return result;
+  //  Check for valid Assignment Group:
+  if (!Object.values(AssignmentGroup).includes(ag)) {
+    throw "Invalid Assignment Group ID";
+  }
+
+  //    Check for valid Learner ID. This is array.
+  // Look into helper function!
+
+  // Get the l.assignment ID
+  console.log(LearnerSubmissions.prototype.some((learnerValid) => learnerValid.learner_id == sumbmission));
+//Filter the learner's ID data
+//   console.log(
+//     LearnerSubmissions.filter((learner) => learner.learner_id == submissions)
+//   );
+ 
+  // to get the following from Assignment Grp - ag.name, ag.due date, and ag.possible points
+  // also - l.submission date and l.score
 }
 
-const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+// Code console to get the input data
+const result = getLearnerData(451, 12345, 1256);
 
-console.log(result);
+// console.log(result);
