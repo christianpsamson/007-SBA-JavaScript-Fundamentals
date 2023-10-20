@@ -1,4 +1,13 @@
 **********************************************************************************
+                               Description: 
+**********************************************************************************
+This JavaScript application is designed to extract a participant or learner's performance score by leveraging data from two distinct sources: (1) LearnerSubmissions and (2) AssignmentGroup. Additional validation procedure will also be executed against (3) CourseInfo object to ensure input data accuracy.
+
+To utilize this application, three essential input parameters are required: CourseInfo, AssignmentGroup, and an array containing LearnerSubmissions. This critical piece of code can be found at the bottom section. Notably, the final input parameter is an array.
+
+The output of this process is conveniently presented in the console.log, facilitating easy testing and verification.
+
+**********************************************************************************
                                Requirements included: 
 **********************************************************************************
 - Variables were declared using let and const
