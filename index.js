@@ -80,6 +80,7 @@ const LearnerSubmissions = [
 // ====================================================================//
 let newArray = [];
 let resultArray = [];
+let resultArrayReordered = [];
 // ====================================================================//
 // Desc: Validate input Course ID & Assignment Group ID                //
 // ====================================================================//
@@ -110,48 +111,71 @@ const createArray = function () {
 // ====================================================================//
 // Desc: Generate the final result                                     //
 // ====================================================================//
-// A. Loop through newArray
 const generateResult = function () {
   let rptId = 0;
-  let tempRptId = 0;
+  let rptIdTemp = 0;
   let rptAssignId = 0;
   let rptScore = 0;
-  let rptMaxScore = 0;
-  let rptAccScore = 0;
-  let rptAccMaxScore = 0;
+  let rptScoreMax = 0;
+  let rptScoreAcc = 0;
+  let rptScoreMaxAcc = 0;
   let rptAve = 0;
   let rptAccAve = 0;
-  let rptDueDate = "";
-  let rptSubDate = "";
+  let rptDateDue = "";
+  let rptDateSub = "";
+  let indexResultArray = 0;
+  // A. Loop through newArray
   for (i = 0; i < newArray.length; i++) {
     rptId = newArray[i].learner_id;
-    if (tempRptId !== rptId && i != 0) {
-      rptAccAve = rptAccScore / rptAccMaxScore;
-      
+    if (i === 0) {
+      resultArray[indexResultArray] = { id: rptId };
+    } else if (i === newArray.length - 1) {
+      rptAccAve = rptScoreAcc / rptScoreMaxAcc;
+      resultArray[indexResultArray]["ave"] = rptAccAve;
+    }
+    if (rptIdTemp !== rptId && i != 0) {
+      rptAccAve = rptScoreAcc / rptScoreMaxAcc;
+      resultArray[indexResultArray]["ave"] = rptAccAve;
+      rptScoreAcc = 0;
+      rptScoreMaxAcc = 0;
+      indexResultArray += 1;
+      resultArray[indexResultArray] = { id: rptId };
+    }
+    rptIdTemp = rptId;
+    rptAssignId = newArray[i].assignment_id;
+    rptDateDue = new Date(newArray[i].due_date);
+    rptDateSub = new Date(newArray[i].submission.submitted_at);
+    // Validate if late
+    if (rptDateSub > rptDateDue) {
+      rptScore = newArray[i].submission.score - 0.1 * newArray[i].max_points;
     } else {
-      tempRptId = rptId;
-      rptAssignId = newArray[i].assignment_id;
-      rptDueDate = new Date(newArray[i].due_date);
-      rptSubDate = new Date(newArray[i].submission.submitted_at);
-      // Validate if late
-      if (rptSubDate > rptDueDate) {
-        rptScore = newArray[i].submission.score - 0.1 * newArray[i].max_points;
-      } else {
-        rptScore = newArray[i].submission.score;
+      rptScore = newArray[i].submission.score;
+    }
+    // Validate if due in the future
+    if (rptDateDue > new Date()) {
+      rptScore = 0;
+      rptScoreMax = 0;
+    } else {
+      rptScoreMax = newArray[i].max_points;
+      rptAve = parseFloat((rptScore / rptScoreMax).toFixed(3));
+      switch (rptAssignId) {
+        case 1:
+          resultArray[indexResultArray]["1"] = rptAve;
+          break;
+        case 2:
+          resultArray[indexResultArray]["2"] = rptAve;
+          break;
+        case 3:
+          resultArray[indexResultArray]["3"] = rptAve;
+          break;
       }
-      // Validate if due in the future
-      if (rptDueDate > new Date()) {
-        rptScore = 0;
-        rptMaxScore = 0;
-      } else {
-        rptMaxScore = newArray[i].max_points;
-        rptAve = (rptScore / rptMaxScore).toFixed(3);
-        console.log(rptAve);
-      }
-      rptAccMaxScore += rptMaxScore;
-      rptAccScore += rptScore;
+
+      rptScoreMaxAcc += rptScoreMax;
+      rptScoreAcc += rptScore;
     }
   }
+
+  return resultArray;
 };
 // ====================================================================//
 // MAIN FUNCTION                                                       //
@@ -168,14 +192,10 @@ function getLearnerData(course, ag, submissions) {
       throw "Invalid Learner ID";
   });
   createArray();
-  generateResult();
-  // calculating the weighted average
-  // validate the date
-  //
+  console.log(generateResult());
+
   // ================================END=================================//
 }
 
 // Input data; Note: Learner Submission is an array
 const result = getLearnerData(451, 12345, [125, 132]);
-
-// console.log(result);
