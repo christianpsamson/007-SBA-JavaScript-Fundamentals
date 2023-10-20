@@ -76,13 +76,14 @@ const LearnerSubmissions = [
   },
 ];
 // ====================================================================//
-// Define global variable                                              //
+// Define global variables                                             //
 // ====================================================================//
 let newArray = [];
 let resultArray = [];
 let resultArrayReordered = [];
 // ====================================================================//
 // Desc: Validate input Course ID & Assignment Group ID                //
+//       Check if they exist in the data structure                     //
 // ====================================================================//
 const validateInputData = function (objName, objID, errMsg) {
   if (!Object.values(objName).includes(objID)) {
@@ -91,6 +92,7 @@ const validateInputData = function (objName, objID, errMsg) {
 };
 // ====================================================================//
 // Desc: Create an array from Learner Object & Assignment Grp          //
+//       Note: Will be evoked only when IDs are valid                  //
 // ====================================================================//
 
 const createArray = function () {
@@ -109,7 +111,7 @@ const createArray = function () {
   }
 };
 // ====================================================================//
-// Desc: Generate the final result                                     //
+// Desc: Generate an array for final result                            //
 // ====================================================================//
 const generateResult = function () {
   let rptId = 0;
@@ -124,36 +126,42 @@ const generateResult = function () {
   let rptDateDue = "";
   let rptDateSub = "";
   let indexResultArray = 0;
+  let flagNewLearnerID = false;
   for (i = 0; i < newArray.length; i++) {
     rptId = newArray[i].learner_id;
     // A. Initial Process: update the array with ID
+    let rptLength = i;
     if (i === 0) {
       resultArray[indexResultArray] = { id: rptId };
       // B. Final Process: update the array with average for last ID
-    } else if (i === newArray.length - 1) {
-      rptAccAve = rptScoreAcc / rptScoreMaxAcc;
-      resultArray[indexResultArray]["ave"] = rptAccAve;
     }
     // C. Update the array with average when it changes ID
     if (rptIdTemp !== rptId && i != 0) {
+      flagNewLearnerID = true;
+    }
+    if (flagNewLearnerID) {
       rptAccAve = rptScoreAcc / rptScoreMaxAcc;
       resultArray[indexResultArray]["ave"] = rptAccAve;
       rptScoreAcc = 0;
       rptScoreMaxAcc = 0;
       indexResultArray += 1;
       resultArray[indexResultArray] = { id: rptId };
+      flagNewLearnerID = false;
     }
     rptIdTemp = rptId;
     rptAssignId = newArray[i].assignment_id;
+    //Troubleshoot this!
     rptDateDue = new Date(newArray[i].due_date);
     rptDateSub = new Date(newArray[i].submission.submitted_at);
+
     // D. Late submission validation
     if (rptDateSub > rptDateDue) {
       rptScore = newArray[i].submission.score - 0.1 * newArray[i].max_points;
     } else {
       rptScore = newArray[i].submission.score;
     }
-    // E. Future scheduled due date validation
+    // E. Future scheduled due-date validation
+    //    Note: Score will not count if not yet due
     if (rptDateDue > new Date()) {
       rptScore = 0;
       rptScoreMax = 0;
@@ -176,6 +184,9 @@ const generateResult = function () {
       rptScoreAcc += rptScore;
     }
   }
+  // Update the array with the last average available`
+  rptAccAve = rptScoreAcc / rptScoreMaxAcc;
+  resultArray[indexResultArray]["ave"] = rptAccAve;
 
   return resultArray;
 };
@@ -199,7 +210,7 @@ function getLearnerData(course, ag, submissions) {
 // ====================================================================//
 // Input Data: (1) Course ID                                           //
 //             (2) Assignment Group ID                                 //
-//             (3) Learner ID in array format                          //
+//             (3) Learner ID in array                                 //
 // ====================================================================//
 const result = getLearnerData(451, 12345, [125, 132]);
 

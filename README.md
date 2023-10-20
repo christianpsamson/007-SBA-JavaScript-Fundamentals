@@ -1,4 +1,6 @@
-Requirements included: 
+**********************************************************************************
+                               Requirements included: 
+**********************************************************************************
 - Variables were declared using let and const
 - Used operators to calculate the weighted avarage
 - Used strings, numbers, and boolean
@@ -10,4 +12,8 @@ Requirements included:
 - Created and evoked functions
 - Program outputs the expected array
 - Program runs without errors
-
+- Final result:
+[
+  { '1': 0.94, '2': 1, id: 125, ave: 0.985 },
+  { '1': 0.78, '2': 0.833, id: 132, ave: 0.78 }
+]
