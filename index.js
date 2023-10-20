@@ -124,15 +124,17 @@ const generateResult = function () {
   let rptDateDue = "";
   let rptDateSub = "";
   let indexResultArray = 0;
-  // A. Loop through newArray
   for (i = 0; i < newArray.length; i++) {
     rptId = newArray[i].learner_id;
+    // A. Initial Process: update the array with ID
     if (i === 0) {
       resultArray[indexResultArray] = { id: rptId };
+      // B. Final Process: update the array with average for last ID
     } else if (i === newArray.length - 1) {
       rptAccAve = rptScoreAcc / rptScoreMaxAcc;
       resultArray[indexResultArray]["ave"] = rptAccAve;
     }
+    // C. Update the array with average when it changes ID
     if (rptIdTemp !== rptId && i != 0) {
       rptAccAve = rptScoreAcc / rptScoreMaxAcc;
       resultArray[indexResultArray]["ave"] = rptAccAve;
@@ -145,19 +147,20 @@ const generateResult = function () {
     rptAssignId = newArray[i].assignment_id;
     rptDateDue = new Date(newArray[i].due_date);
     rptDateSub = new Date(newArray[i].submission.submitted_at);
-    // Validate if late
+    // D. Late submission validation
     if (rptDateSub > rptDateDue) {
       rptScore = newArray[i].submission.score - 0.1 * newArray[i].max_points;
     } else {
       rptScore = newArray[i].submission.score;
     }
-    // Validate if due in the future
+    // E. Future scheduled due date validation
     if (rptDateDue > new Date()) {
       rptScore = 0;
       rptScoreMax = 0;
     } else {
       rptScoreMax = newArray[i].max_points;
       rptAve = parseFloat((rptScore / rptScoreMax).toFixed(3));
+      // F. Update array with average for each Assigment Group ID
       switch (rptAssignId) {
         case 1:
           resultArray[indexResultArray]["1"] = rptAve;
@@ -169,7 +172,6 @@ const generateResult = function () {
           resultArray[indexResultArray]["3"] = rptAve;
           break;
       }
-
       rptScoreMaxAcc += rptScoreMax;
       rptScoreAcc += rptScore;
     }
@@ -193,9 +195,12 @@ function getLearnerData(course, ag, submissions) {
   });
   createArray();
   console.log(generateResult());
-
-  // ================================END=================================//
 }
-
-// Input data; Note: Learner Submission is an array
+// ====================================================================//
+// Input Data: (1) Course ID                                           //
+//             (2) Assignment Group ID                                 //
+//             (3) Learner ID in array format                          //
+// ====================================================================//
 const result = getLearnerData(451, 12345, [125, 132]);
+
+// ================================END=================================//
