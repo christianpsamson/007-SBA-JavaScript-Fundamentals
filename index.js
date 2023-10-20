@@ -171,13 +171,13 @@ const generateResult = function () {
       // F. Update array with average for each Assigment Group ID
       switch (rptAssignId) {
         case 1:
-          resultArray[indexResultArray]["1"] = rptAve;
+          resultArray[indexResultArray]['1'] = rptAve;
           break;
         case 2:
-          resultArray[indexResultArray]["2"] = rptAve;
+          resultArray[indexResultArray]['2'] = rptAve;
           break;
         case 3:
-          resultArray[indexResultArray]["3"] = rptAve;
+          resultArray[indexResultArray]['3'] = rptAve;
           break;
       }
       rptScoreMaxAcc += rptScoreMax;
@@ -195,17 +195,21 @@ const generateResult = function () {
 // Note: Headers were included for SBA purposes only                   //
 // ====================================================================//
 function getLearnerData(course, ag, submissions) {
-  //Validate the (1)Course ID and (2) Assignment Group ID:
-  validateInputData(CourseInfo, course, "Invalid Course ID");
-  validateInputData(AssignmentGroup, ag, "Invalid Assignment Group ID");
+  try {
+    //Validate the (1)Course ID and (2) Assignment Group ID:
+    validateInputData(CourseInfo, course, "Invalid Course ID");
+    validateInputData(AssignmentGroup, ag, "Invalid Assignment Group ID");
 
-  // Validate the Learner ID.
-  LearnerSubmissions.forEach((learnerData) => {
-    if (!submissions.includes(learnerData.learner_id))
-      throw "Invalid Learner ID";
-  });
-  createArray();
-  console.log(generateResult());
+    // Validate the Learner ID.
+    LearnerSubmissions.forEach((learnerData) => {
+      if (!submissions.includes(learnerData.learner_id))
+        throw "Invalid Learner ID";
+    });
+    createArray();
+    console.log(generateResult());
+  } catch (error) {
+    console.error("An error occurred: ", error);
+  }
 }
 // ====================================================================//
 // Input Data: (1) Course ID                                           //
